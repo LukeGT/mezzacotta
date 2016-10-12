@@ -12,25 +12,29 @@ array[Coins] of int: CoinWeights;
 
 % Variables
 
-array[1..4] of var int: left;
-array[1..4] of var int: right;
+array[1..16] of var set of Coins: arrangement;
 
 
 % Constraints
 
-constraint increasing(left);
-constraint increasing(right);
+constraint forall(a in 1..16) (
+  card(arrangement[a]) = 4
+);
 
-constraint all_different(left ++ right);
+constraint all_disjoint(arrangement);
 
-constraint lex_greater(left, right);
+constraint increasing([ arrangement[a*2] | a in 1..8 ]);
 
-array[1..4] of var int: left_weights = [ CoinWeights[left[c]] | c in 1..4 ];
-array[1..4] of var int: right_weights = [ CoinWeights[right[c]] | c in 1..4 ];
+array[1..16] of var int: sums = [
+  sum([ CoinWeights[c] | c in arrangement[a] ])
+| a in 1..16 ];
 
-constraint sum(left_weights) = sum(right_weights);
+constraint forall(a in 1..8) (
+  increasing([ arrangement[a*2-1], arrangement[a*2] ])
+  /\ sums[a*2-1] = sums[a*2]
+);
 
 
 solve satisfy;
 
-output [ show(left_weights) ++ "\n" ++ show(right_weights) ++ "\n" ];
+output [ show(arrangement) ++ "\n" ];

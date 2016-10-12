@@ -1,6 +1,7 @@
-nCoins = 63;
+nCoins = 64;
 
 CoinWeights = [
+  0,
   1,
   5,
   10,
